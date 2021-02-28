@@ -24,12 +24,47 @@ def add_n():
     n_vertex += 1
     return n_vertex
 
+def point_with_edge(p):
+    global lines
+    pwe = []
+    for [p1,p2,vxs] in lines:
+        if p[1] in vxs:
+            pwe.append([p1,p2,vxs])
+    if len(pwe) == 0:
+        return False
+    else:
+        return pwe
+
+def remove_edge(line):
+    global lines
+    p1,p2 = line[2]
+    for i,l in enumerate(lines):
+        if p1 in l[2] and p2 in l[2]:
+            del lines[i]
+
+
+
+def update_edge(line,new_p):
+    global points
+    p1 = new_p[0]
+    p2 = (0,0)
+    for p in points:
+        if p[1] in line[2] and p[1] != new_p[1]:
+            p2 = p[0]
+            pygame.draw.line(screen, (0,200,0), p1, p2)
+            remove_edge(line)
+            lines.append([p1, p2,line[2]])
+            break
+    
+
+
+
 def moving_point(p):
     global lines, points,screen
     n = p[1]
     while True:
-        print('bla')
-        print(pygame.mouse.get_pressed())
+        #print('bla')
+        #print(pygame.mouse.get_pressed())
         if pygame.mouse.get_pressed() == (0, 0, 1):
             print('blabla')
             points.remove(p)
@@ -37,17 +72,25 @@ def moving_point(p):
             p = new_p
             points.append(new_p)
             update_dis(points,lines,screen)
-            
-            print('dentro')
+            #print('dentro')
             trash = pygame.event.get()
             pygame.event.clear()
+            
+            edges = point_with_edge(p)
+
+            if edges:
+                print('KKKKKKKKKKK')
+                for ed in edges:
+                    update_edge(ed,new_p)
+
+
         else:
             pygame.event.clear()
             return 0
         #break
 
 def draw_lines(lines):
-    for p1,p2 in lines:
+    for p1,p2,coord in lines:
         #print(lines)
         pygame.draw.line(screen, (0,200,0), p1, p2)
 
@@ -90,9 +133,9 @@ def drag_line(p):
     pygame.event.clear()
     count = 0
     while True:
-        print(pygame.mouse.get_pressed())
+        #print(pygame.mouse.get_pressed())
         if pygame.mouse.get_pressed() == (1, 0, 0):
-            print('ckaa')
+            #print('ckaa')
             pygame.event.get()
             
             if count == 10:
@@ -109,7 +152,9 @@ def drag_line(p):
                 [(px,py),n] = other_p
                 if (((x-px)**2 + (y-py)**2)**(1/2)) < radius+5:
                     #pygame.draw.line(screen, (0,200,0), p, other_p)
-                    lines.append([p[0],other_p[0]])
+                    sorted_points = sorted([p[1],other_p[1]])
+                    print(([p[0],other_p[0],sorted_points]))
+                    lines.append([p[0],other_p[0],sorted_points])
                     update_dis(points,lines,screen)
                     print('entered')
                     break
