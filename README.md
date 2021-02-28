@@ -7,3 +7,5 @@ For Advanced Algorithms class.
 - Left click to **create vertex**
 - Left click-hold vertex, drag to another vertex and release to **create edge**
 - Right click-hold vertex and drag to **move it (vertex)**
+## Example
+![](example.png)
